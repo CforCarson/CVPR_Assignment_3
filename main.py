@@ -40,7 +40,8 @@ class PennFudanDataset(torch.utils.data.Dataset):
 
         # Only one class: person (assign label 1)
         labels = torch.ones((num_objs,), dtype=torch.int64)
-        image_id = torch.tensor([idx])
+        # --- Modification: use a plain integer for image_id instead of a tensor ---
+        image_id = idx
         area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])
         iscrowd = torch.zeros((num_objs,), dtype=torch.int64)
 
@@ -170,9 +171,6 @@ def hog_detector(img_path, scale=1.05, winStride=(8, 8), padding=(8, 8)):
     img_result = cv2.cvtColor(img_copy, cv2.COLOR_BGR2RGB)
     return img_result
 
-# (Optional) Custom evaluation for HOG-based detections could be implemented here.
-# For a fair comparison, one would compute IoU metrics against ground truth boxes from PennFudan.
-
 # ---------------------------------------------------------------------
 # 6. Main Routine: Training, Testing, and Visual Comparison
 # ---------------------------------------------------------------------
@@ -209,7 +207,7 @@ def main():
         if score > 0.8:
             box = box.numpy().astype(int)
             cv2.rectangle(img_np, (box[0], box[1]), (box[2], box[3]), (255, 0, 0), 2)
-            cv2.putText(img_np, f"{score:.2f}", (box[0], box[1]-10),
+            cv2.putText(img_np, f"{score:.2f}", (box[0], box[1] - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
     # -----------------------------------------------------------
